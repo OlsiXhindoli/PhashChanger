@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Results</title>
+  <style>
+    table, th, td {border: 1px solid #aaa; border-collapse: collapse; padding: 4px;}
+    img {max-width: 100px;}
+  </style>
+</head>
+<body>
+<h1>Mutation Results</h1>
+<section>
+  <h2>Original</h2>
+  <p>pHash: {{ orig_hash }}</p>
+  <img src="{{ url_for('temp_files', filename=orig_path) }}" alt="original">
+</section>
+
+<h2>Variants</h2>
+<table>
+  <tr><th>Image</th><th>pHash</th><th>Dist to Original</th></tr>
+  {% for v in variants %}
+  <tr>
+    <td><img src="{{ url_for('temp_files', filename=v.path_out.split('/')[-1]) }}" alt="variant"></td>
+    <td>{{ '%016x' % v.phash_int }}</td>
+    <td>{{ v.distance_to_original }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</body>
+</html>
