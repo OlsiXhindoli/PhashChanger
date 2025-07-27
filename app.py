@@ -66,7 +66,6 @@ def mutate():
 
     orig_hash = phash(Image.open(path_in).convert("RGB"))
     app.logger.info("Original pHash %s", orig_hash)
-
     return render_template(
         "result.html",
         orig_path=orig_name,

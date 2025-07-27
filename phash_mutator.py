@@ -3,13 +3,15 @@ from typing import List, Dict, Union
 import uuid
 import random
 import logging
+from typing import List, Dict
+import uuid
+import random
 import numpy as np
 from PIL import Image, ImageEnhance
 import imagehash
 from utils import hamming
 
 logger = logging.getLogger(__name__)
-
 
 def phash(img: Image.Image) -> imagehash.ImageHash:
     """Return perceptual hash of the image."""
@@ -24,7 +26,7 @@ _TRANSFORMS = (
     "sharpness",
     "gaussian_noise",
     "shift_one_pixel",
-    "rotate_small",
+    "rotate_small"
 )
 
 
