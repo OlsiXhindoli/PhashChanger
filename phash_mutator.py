@@ -3,13 +3,16 @@ from typing import List, Dict, Union
 import uuid
 import random
 import logging
+from typing import List, Dict
+import uuid
+import random
 import numpy as np
 from PIL import Image, ImageEnhance
 import imagehash
 from utils import hamming
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 def phash(img: Image.Image) -> imagehash.ImageHash:
     """Return perceptual hash of the image."""
@@ -40,6 +43,18 @@ def random_transform(img: Image.Image, op: str) -> Image.Image:
         return cropped.resize((w, h), Image.LANCZOS)
     if op == "brightness":
         factor = 1 + random.uniform(-0.2, 0.2)
+
+    if op == "tiny_crop":
+        # crop 1-2 pixels around the border then resize back
+        w, h = img.size
+        left = random.randint(0, 2)
+        top = random.randint(0, 2)
+        right = random.randint(0, 2)
+        bottom = random.randint(0, 2)
+        cropped = img.crop((left, top, w - right, h - bottom))
+        return cropped.resize((w, h))
+    if op == "brightness":
+        factor = 1 + random.uniform(-0.1, 0.1)
         enhancer = ImageEnhance.Brightness(img)
         return enhancer.enhance(factor)
     if op == "gaussian_noise":
@@ -72,6 +87,7 @@ def generate_variants(
     inter_bits: int = 6,
     max_iter: int = 300,
 ) -> List[Dict]:
+
     """Return list of unique variants meeting distance constraints.
 
     The function chains up to three random micro-edits to the original
@@ -90,6 +106,8 @@ def generate_variants(
     orig = Image.open(path_in).convert("RGB")
     h0 = phash(orig)
     logger.debug("Original pHash %s", h0)
+    orig = Image.open(path_in).convert("RGB")
+    h0 = phash(orig)
     variants = []
     iter_cnt = 0
     while len(variants) < n and iter_cnt < max_iter:
