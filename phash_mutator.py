@@ -136,10 +136,10 @@ def generate_variants(
         
         for _ in range(4):
 
-        for _ in range(3):
+            for _ in range(3):
 
-            img_tmp, op = mutate_once(img_tmp)
-            ops.append(op)
+                img_tmp, op = mutate_once(img_tmp)
+                ops.append(op)
         h1 = phash(img_tmp)
         d0 = hamming(h0, h1)
         if d0 < target_bits:
