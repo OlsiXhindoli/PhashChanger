@@ -10,7 +10,6 @@ from utils import hamming
 
 logger = logging.getLogger(__name__)
 
-
 def phash(img: Image.Image) -> imagehash.ImageHash:
     """Return perceptual hash of the image."""
     return imagehash.phash(img)
@@ -24,7 +23,7 @@ _TRANSFORMS = (
     "sharpness",
     "gaussian_noise",
     "shift_one_pixel",
-    "rotate_small",
+    "rotate_small"
 )
 
 
