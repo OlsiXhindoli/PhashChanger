@@ -19,7 +19,10 @@ try:
 except Exception as exc:  # pragma: no cover - optional dependency
     logging.getLogger(__name__).warning("HEIF support unavailable: %s", exc)
 
-logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s %(name)s: %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(asctime)s] %(levelname)s %(name)s: %(message)s",
+)
 
 app = Flask(__name__)
 

@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import List, Dict
 import uuid
 import random
@@ -96,7 +95,9 @@ def generate_variants(
         d0 = hamming(h0, h1)
         if d0 < target_bits:
             logger.debug(
-                "Discarding candidate due to distance %d (<%d)", d0, target_bits
+                "Discard candidate distance %d (<%d)",
+                d0,
+                target_bits,
             )
             continue
         if any(hamming(v["phash_int"], h1) < inter_bits for v in variants):
@@ -119,7 +120,10 @@ def generate_variants(
             d0,
         )
     if len(variants) < n:
-        msg = f"Generated only {len(variants)} variants after {iter_cnt} attempts."
+        msg = (
+            f"Generated only {len(variants)} variants after "
+            f"{iter_cnt} attempts."
+        )
         logger.error(msg)
         raise RuntimeError(msg)
     logger.info("Generated all %d variants in %d attempts", n, iter_cnt)
