@@ -9,7 +9,8 @@ from flask import (
     render_template,
     send_from_directory,
 )
-from PIL import Image
+
+from PIL import Image, ImageOps
 
 from phash_mutator import generate_variants, phash
 
@@ -58,14 +59,17 @@ def mutate():
     app.logger.info("Saved upload to %s", path_in)
 
     try:
-        variants = generate_variants(path_in, n=10)
+
+        variants = generate_variants(path_in, n=5)
     except RuntimeError as exc:
         app.logger.error("Variant generation failed: %s", exc)
         return f"Error: {exc}", 500
     app.logger.info("Generated %d variants", len(variants))
 
-    orig_hash = phash(Image.open(path_in).convert("RGB"))
+    orig_img = ImageOps.exif_transpose(Image.open(path_in)).convert("RGB")
+    orig_hash = phash(orig_img)
     app.logger.info("Original pHash %s", orig_hash)
+
     return render_template(
         "result.html",
         orig_path=orig_name,

@@ -3,11 +3,8 @@ from typing import List, Dict, Union
 import uuid
 import random
 import logging
-from typing import List, Dict
-import uuid
-import random
 import numpy as np
-from PIL import Image, ImageEnhance
+from PIL import Image, ImageEnhance, ImageOps
 import imagehash
 from utils import hamming
 
@@ -34,10 +31,10 @@ def random_transform(img: Image.Image, op: str) -> Image.Image:
     """Return a new Image after applying one micro-edit."""
     logger.debug("Applying transform: %s", op)
     if op == "tiny_crop":
-        # crop up to 5% from each side then resize back
+        # crop up to 8% from each side then resize back
         w, h = img.size
-        max_crop_w = max(1, int(w * 0.05))
-        max_crop_h = max(1, int(h * 0.05))
+        max_crop_w = max(1, int(w * 0.08))
+        max_crop_h = max(1, int(h * 0.08))
         left = random.randint(0, max_crop_w)
         top = random.randint(0, max_crop_h)
         right = random.randint(0, max_crop_w)
@@ -45,7 +42,7 @@ def random_transform(img: Image.Image, op: str) -> Image.Image:
         cropped = img.crop((left, top, w - right, h - bottom))
         return cropped.resize((w, h), Image.LANCZOS)
     if op == "brightness":
-        factor = 1 + random.uniform(-0.2, 0.2)
+        factor = 1 + random.uniform(-0.3, 0.3)
         enhancer = ImageEnhance.Brightness(img)
         return enhancer.enhance(factor)
     if op == "contrast":
@@ -62,19 +59,19 @@ def random_transform(img: Image.Image, op: str) -> Image.Image:
         return enhancer.enhance(factor)
     if op == "gaussian_noise":
         arr = np.array(img).astype(np.float32)
-        noise = np.random.normal(0, 3, arr.shape)
+        noise = np.random.normal(0, 5, arr.shape)
         arr += noise
         arr = np.clip(arr, 0, 255).astype(np.uint8)
         return Image.fromarray(arr)
     if op == "shift_one_pixel":
         arr = np.array(img)
-        dx = random.choice([-2, -1, 1, 2])
-        dy = random.choice([-2, -1, 1, 2])
+        dx = random.choice([-3, -2, -1, 1, 2, 3])
+        dy = random.choice([-3, -2, -1, 1, 2, 3])
         arr = np.roll(arr, shift=dx, axis=1)
         arr = np.roll(arr, shift=dy, axis=0)
         return Image.fromarray(arr)
     if op == "rotate_small":
-        angle = random.uniform(-2.0, 2.0)
+        angle = random.uniform(-4.0, 4.0)
         return img.rotate(angle, resample=Image.BICUBIC, expand=False)
     raise ValueError(f"Unknown transform: {op}")
 
@@ -88,7 +85,7 @@ def mutate_once(img: Image.Image):
 
 def generate_variants(
     path_in: Union[str, Path],
-    n: int = 10,
+    n: int = 5,
     target_bits: int = 14,
     inter_bits: int = 6,
     max_iter: int = 300,
@@ -108,7 +105,7 @@ def generate_variants(
         inter_bits,
     )
     path_in = Path(path_in)
-    orig = Image.open(path_in).convert("RGB")
+    orig = ImageOps.exif_transpose(Image.open(path_in)).convert("RGB")
     h0 = phash(orig)
     logger.debug("Original pHash %s", h0)
     variants = []
