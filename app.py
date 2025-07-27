@@ -32,7 +32,6 @@ TEMP_DIR = "/tmp"
 ALLOWED_EXTS = {".jpg", ".jpeg", ".png", ".pne", ".heic"}
 
 
-
 @app.route("/")
 def index():
     """Render simple upload form."""
@@ -51,7 +50,6 @@ def mutate():
     file = request.files.get("image")
     if not file or file.filename == "":
         return redirect(url_for("index"))
-
 
     ext = os.path.splitext(file.filename)[1].lower() or ".png"
     if ext not in ALLOWED_EXTS:
@@ -72,14 +70,11 @@ def mutate():
 
     orig_hash = phash(Image.open(path_in).convert("RGB"))
     app.logger.info("Original pHash %s", orig_hash)
+
     ext = os.path.splitext(file.filename)[1] or ".png"
     orig_name = f"orig_{uuid.uuid4().hex}{ext}"
     path_in = os.path.join(TEMP_DIR, orig_name)
     file.save(path_in)
-
-    variants = generate_variants(path_in, n=10)
-
-    orig_hash = phash(Image.open(path_in).convert("RGB"))
 
 
     return render_template(
@@ -93,6 +88,7 @@ def mutate():
 @app.route("/tmp/<path:filename>")
 def temp_files(filename):
     """Serve files saved in the temporary directory."""
+
 
     app.logger.debug("Serving file %s", filename)
 
