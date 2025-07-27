@@ -4,7 +4,7 @@ from typing import List, Dict, Union
 import uuid
 import random
 import logging
-=======
+
 from typing import List, Dict
 import uuid
 import random
@@ -16,7 +16,7 @@ from utils import hamming
 
 logger = logging.getLogger(__name__)
 
-=======
+
 
 
 def phash(img: Image.Image) -> imagehash.ImageHash:
@@ -49,7 +49,6 @@ def random_transform(img: Image.Image, op: str) -> Image.Image:
         return cropped.resize((w, h), Image.LANCZOS)
     if op == "brightness":
         factor = 1 + random.uniform(-0.2, 0.2)
-=======
     if op == "tiny_crop":
         # crop 1-2 pixels around the border then resize back
         w, h = img.size
@@ -68,7 +67,7 @@ def random_transform(img: Image.Image, op: str) -> Image.Image:
         arr = np.array(img).astype(np.float32)
 
         noise = np.random.normal(0, 8, arr.shape)
-=======
+
         noise = np.random.normal(0, 3, arr.shape)
 
         arr += noise
@@ -79,7 +78,7 @@ def random_transform(img: Image.Image, op: str) -> Image.Image:
 
         dx = random.choice([-2, -1, 1, 2])
         dy = random.choice([-2, -1, 1, 2])
-=======
+
         dx = random.choice([-1, 1])
         dy = random.choice([-1, 1])
 
@@ -94,7 +93,7 @@ def mutate_once(img: Image.Image):
     op = random.choice(_TRANSFORMS)
 
     logger.debug("Chosen transform: %s", op)
-=======
+
 
     return random_transform(img, op), op
 
@@ -102,7 +101,7 @@ def mutate_once(img: Image.Image):
 def generate_variants(
 
     path_in: Union[str, Path],
-=======
+
     path_in: str,
 
     n: int = 10,
@@ -123,7 +122,7 @@ def generate_variants(
     orig = Image.open(path_in).convert("RGB")
     h0 = phash(orig)
     logger.debug("Original pHash %s", h0)
-=======
+
     orig = Image.open(path_in).convert("RGB")
     h0 = phash(orig)
 
@@ -136,7 +135,7 @@ def generate_variants(
 
         
         for _ in range(4):
-=======
+
         for _ in range(3):
 
             img_tmp, op = mutate_once(img_tmp)
@@ -159,7 +158,7 @@ def generate_variants(
         variants.append(
             dict(
                 path_out=str(out_path),
-=======
+
             continue
         if any(hamming(v["phash_int"], h1) < inter_bits for v in variants):
             continue
@@ -189,7 +188,7 @@ def generate_variants(
         logger.error(msg)
         raise RuntimeError(msg)
     logger.info("Generated all %d variants in %d attempts", n, iter_cnt)
-=======
+
     if len(variants) < n:
         raise RuntimeError(
             f"Generated only {len(variants)} variants after {iter_cnt} attempts."
