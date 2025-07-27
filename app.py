@@ -1,7 +1,6 @@
 import os
 import uuid
 import logging
-=======
 from flask import (
     Flask,
     request,
@@ -25,7 +24,6 @@ logging.basicConfig(
     format="[%(asctime)s] %(levelname)s %(name)s: %(message)s",
 )
 
-=======
 app = Flask(__name__)
 
 TEMP_DIR = "/tmp"
@@ -33,7 +31,6 @@ TEMP_DIR = "/tmp"
 # Acceptable file extensions
 ALLOWED_EXTS = {".jpg", ".jpeg", ".png", ".pne", ".heic"}
 
-=======
 
 
 @app.route("/")
@@ -41,7 +38,6 @@ def index():
     """Render simple upload form."""
 
     app.logger.info("Rendering upload form")
-=======
 
     return render_template("index.html")
 
@@ -51,7 +47,6 @@ def mutate():
     """Handle upload and display variant results."""
 
     app.logger.info("Received mutation request")
-=======
 
     file = request.files.get("image")
     if not file or file.filename == "":
