@@ -72,7 +72,6 @@ def mutate():
 
     orig_hash = phash(Image.open(path_in).convert("RGB"))
     app.logger.info("Original pHash %s", orig_hash)
-=======
     ext = os.path.splitext(file.filename)[1] or ".png"
     orig_name = f"orig_{uuid.uuid4().hex}{ext}"
     path_in = os.path.join(TEMP_DIR, orig_name)
@@ -96,7 +95,6 @@ def temp_files(filename):
     """Serve files saved in the temporary directory."""
 
     app.logger.debug("Serving file %s", filename)
-=======
 
     return send_from_directory(TEMP_DIR, filename)
 
