@@ -1,4 +1,5 @@
-from typing import List, Dict
+from pathlib import Path
+from typing import List, Dict, Union
 import uuid
 import random
 import logging
@@ -65,7 +66,7 @@ def mutate_once(img: Image.Image):
 
 
 def generate_variants(
-    path_in: str,
+    path_in: Union[str, Path],
     n: int = 10,
     target_bits: int = 14,
     inter_bits: int = 6,
@@ -79,6 +80,7 @@ def generate_variants(
         target_bits,
         inter_bits,
     )
+    path_in = Path(path_in)
     orig = Image.open(path_in).convert("RGB")
     h0 = phash(orig)
     logger.debug("Original pHash %s", h0)
@@ -103,11 +105,11 @@ def generate_variants(
         if any(hamming(v["phash_int"], h1) < inter_bits for v in variants):
             logger.debug("Candidate too similar to existing variants")
             continue
-        out_path = f"/tmp/mut_{uuid.uuid4().hex}.png"
+        out_path = Path(f"/tmp/mut_{uuid.uuid4().hex}.png")
         img_tmp.save(out_path, "PNG")
         variants.append(
             dict(
-                path_out=out_path,
+                path_out=str(out_path),
                 phash_int=int(str(h1), 16),
                 distance_to_original=d0,
                 ops_history=ops,
